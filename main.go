@@ -10,6 +10,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	tableNameUser = "users"
+)
+
 func main() {
 	// .envファイルから環境変数を読み込む
 	err := godotenv.Load()
@@ -40,6 +44,18 @@ func main() {
 	if err != nil {
 		log.Panicln("Database ping failed:", err)
 	}
-
 	log.Println("Successfully connected to the database")
+
+	// テーブルを作成
+	cmdT := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s(
+		id SERIAL PRIMARY KEY,
+		age INTEGER,
+		name VARCHAR(500),
+		role CHAR(15))`, tableNameUser)
+	_, err = Db.Exec(cmdT)
+	if err != nil {
+		log.Panicln("Error creating table:", err)
+	}
+
+	log.Println("Table 'users' created successfully")
 }
